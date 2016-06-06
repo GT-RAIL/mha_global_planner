@@ -9,8 +9,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
-  <depend>roscpp</depend>
 
   <export>
   </export>
+
+  <doc_depend>doxygen</doc_depend>
 </package>
