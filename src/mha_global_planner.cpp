@@ -1,5 +1,7 @@
 #include "mha_global_planner/mha_global_planner.h"
 
+#include <sbpl/planners/mhaplanner.h>
+
 #include <pluginlib/class_list_macros.h>
 
 // register plugin

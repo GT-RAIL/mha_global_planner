@@ -4,6 +4,7 @@ project(mha_global_planner)
 find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  sbpl_catkin
 )
 
 catkin_package(
@@ -20,15 +21,22 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${SBPL_INCLUDE_DIRS}
 )
 
 add_library(mha_global_planner src/mha_global_planner.cpp)
 
-link_directories(${PCL_LIBRARY_DIRS})
+link_directories(
+  ${PCL_LIBRARY_DIRS}
+  ${SBPL_LIBRARY_DIRS}
+)
+
 add_definitions(${PCL_DEFINITIONS})
+
 target_link_libraries(mha_global_planner
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
+  ${SBPL_LIBRARIES}
 )
 
 #############
