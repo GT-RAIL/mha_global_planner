@@ -1,3 +1,3 @@
 #!/bin/bash
 
-clang-format -i *.cpp *.h
+find . -iname *.h -o -iname *.cpp | xargs clang-format -i
