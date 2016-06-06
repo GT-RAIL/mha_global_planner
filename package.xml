@@ -9,8 +9,12 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
+  <depend>nav_core</depend>
+  <build_depend>libpcl-all-dev</build_depend>
+  <exec_depend>libpcl-all</exec_depend>
 
   <export>
+    <nav_core plugin="${prefix}/mha_global_planner_plugin.xml"/>
   </export>
 
   <doc_depend>doxygen</doc_depend>

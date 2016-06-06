@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mha_global_planner)
 
+find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
@@ -15,33 +16,19 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(mha_global_planner
-#   src/${PROJECT_NAME}/mha_global_planner.cpp
-# )
+add_library(mha_global_planner src/mha_global_planner.cpp)
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(mha_global_planner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Declare a C++ executable
-add_executable(mha_global_planner src/mha_global_planner.cpp)
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(mha_global_planner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 target_link_libraries(mha_global_planner
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
 
 #############

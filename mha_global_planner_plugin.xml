@@ -1,0 +1,5 @@
+<library path="lib/libmha_global_planner">
+  <class name="mha_global_planner/MhaGlobalPlanner" type="mha_global_planner::MhaGlobalPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+    <description>This is a global planner implementing Multi-Heuristic A Star</description>
+  </class>
+</library>
