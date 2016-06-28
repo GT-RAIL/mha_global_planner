@@ -28,6 +28,7 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
+import subprocess
 import os
 import ycm_core
 
@@ -71,9 +72,8 @@ flags = [
 '-I', '/usr/include',
 '-I', '/usr/local/include',
 '-I', 'include',
-'-I', '/home/pdmitrano/catkin_ws/src/sbpl_catkin/sbpl/src/include'
+'-I', '/home/peter/sim_ws/src/sbpl_catkin/sbpl/src/include',
 ]
-
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
 # compile_commands.json file to use that instead of 'flags'. See here for
@@ -165,6 +165,9 @@ def FlagsForFile( filename, **kwargs ):
   else:
     relative_to = DirectoryOfThisScript()
     final_flags = MakeRelativePathsInFlagsAbsolute( flags, relative_to )
+
+  #path = str(subprocess.check_output(['rospack','find','sbpl_catkin'])).rstrip('\n') + "/sbpl/src/include";
+  #final_flags.append(path)
 
   return {
     'flags': final_flags,

@@ -5,12 +5,15 @@ find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sbpl_catkin
+  geometry_msgs
 )
+
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mha_global_planner
-  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp sbpl_catkin geometry_msgs
 )
 
 ###########
