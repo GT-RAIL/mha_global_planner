@@ -9,6 +9,9 @@
 #include <base_local_planner/world_model.h>
 #include <base_local_planner/costmap_model.h>
 
+#include "sbpl/planners/mhaplanner.h"
+#include <stdlib.h>
+
 namespace mha_global_planner {
 
 class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
@@ -22,5 +25,15 @@ class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
 
   virtual void initialize(std::string name,
                           costmap_2d::Costmap2DROS* costmap_ros);
+
+ private:
+  bool initialized_;
+  costmap_2d::Costmap2DROS* costmap_ros_;
+  costmap_2d::Costmap2D* costmap_;
+  MHAPlanner* mha_planner_;
+  DiscreteSpaceInformation* environment_;
+  Heuristic* anchor_heuristic_;
+  std::vector<Heuristic *> heuristics_;
+
 };
 };

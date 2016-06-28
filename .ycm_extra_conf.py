@@ -70,7 +70,8 @@ flags = [
 '-isystem', './tests/gmock/include',
 '-I', '/usr/include',
 '-I', '/usr/local/include',
-'-I', 'include'
+'-I', 'include',
+'-I', '/home/pdmitrano/catkin_ws/src/sbpl_catkin/sbpl/src/include'
 ]
 
 
