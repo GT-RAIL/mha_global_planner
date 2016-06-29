@@ -5,44 +5,13 @@
 namespace mha_global_planner {
 class MhaEnvironment : public DiscreteSpaceInformation {
  public:
-  MhaEnvironment();
 
-  int SetStart(double x_m, double y_m, double theta_rad);
-
-  virtual void GetPreds(int TargetStateID, std::vector<int>* PredIDV,
-                std::vector<int>* CostV) override;
-
-  virtual void SetAllPreds(CMDPSTATE* state) override;
-
-  virtual int SizeofCreatedEnv() override;
-
-  /**
-   * \brief prints the state variables for a state with stateID
-   */
-  virtual void PrintState(int stateID, bool bVerbose, FILE* fOut = NULL) override;
-
-  /**
-   * \brief prints environment config file
-   */
-  virtual void PrintEnv_Config(FILE* fOut) override;
-
-  virtual void SetAllActionsandAllOutcomes(CMDPSTATE* state) override;
-
-  /**
-   * \brief initialization environment from file (see .cfg files for examples)
-   */
-  virtual bool InitializeEnv(const char* sEnvFile) override;
-
-  /**
-   * \brief initialization of MDP data structure
-   */
-  virtual bool InitializeMDPCfg(MDPConfig* MDPCfg) override;
+   MhaEnvironment();
 
   /**
    * \brief heuristic estimate from state FromStateID to state ToStateID
    */
   virtual int GetFromToHeuristic(int FromStateID, int ToStateID) override;
-
   /**
    * \brief heuristic estimate from state with stateID to goal state
    */
@@ -63,5 +32,40 @@ class MhaEnvironment : public DiscreteSpaceInformation {
    */
   virtual void GetSuccs(int SourceStateID, std::vector<int>* SuccIDV,
                         std::vector<int>* CostV) override;
+
+
+  virtual void GetPreds(int TargetStateID, std::vector<int>* PredIDV, std::vector<int>* CostV) override;
+
+  /**
+   * \brief initialization environment from file (see .cfg files for examples)
+   */
+  virtual bool InitializeEnv(const char* sEnvFile) override;
+
+  /**
+   * \brief initialization of MDP data structure
+   */
+  virtual bool InitializeMDPCfg(MDPConfig* MDPCfg) override;
+
+  /**
+   * \brief prints environment config file
+   */
+  virtual void PrintEnv_Config(FILE* fOut) override;
+
+  /**
+   * \brief prints the state variables for a state with stateID
+   */
+  virtual void PrintState(int stateID, bool bVerbose, FILE* fOut = NULL) override;
+
+  virtual void SetAllActionsandAllOutcomes(CMDPSTATE* state) override;
+
+  virtual void SetAllPreds(CMDPSTATE* state) override;
+
+  // returns the stateid if success, and -1 otherwise
+  int SetGoal(double x_m, double y_m, double theta_rad);
+
+  // returns the stateid if success, and -1 otherwise
+  int SetStart(double x_m, double y_m, double theta_rad);
+
+  virtual int SizeofCreatedEnv() override;
 };
 }
