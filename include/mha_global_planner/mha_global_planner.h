@@ -11,6 +11,8 @@
 #include <sbpl/headers.h>
 #include <stdlib.h>
 
+#include "mha_environment.h"
+
 namespace mha_global_planner {
 
 class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
@@ -47,7 +49,7 @@ class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
 
   costmap_2d::Costmap2DROS* costmap_ros_;
   costmap_2d::Costmap2D* costmap_;
-  EnvironmentNAVXYTHETALAT* env_;
+  MhaEnvironment* env_;
   MHAPlanner* mha_planner_;
   Heuristic* anchor_heuristic_;
   std::string primitive_filename_;

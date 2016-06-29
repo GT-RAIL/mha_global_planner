@@ -13,7 +13,7 @@ namespace mha_global_planner {
 
 class MhaStateQueryChange : public StateChangeQuery {
  public:
-  MhaStateQueryChange(EnvironmentNAVXYTHETALAT* env,
+  MhaStateQueryChange(MhaEnvironment* env,
                       std::vector<nav2dcell_t> const& changedcellsV)
       : env_(env), changedcellsV_(changedcellsV) {}
 
@@ -31,7 +31,7 @@ class MhaStateQueryChange : public StateChangeQuery {
     return &succsOfChangedCells_;
   }
 
-  EnvironmentNAVXYTHETALAT* env_;
+  MhaEnvironment* env_;
   std::vector<nav2dcell_t> const& changedcellsV_;
   mutable std::vector<int> predsOfChangedCells_;
   mutable std::vector<int> succsOfChangedCells_;
@@ -69,7 +69,7 @@ void MhaGlobalPlanner::initialize(std::string name,
   lethal_obstacle_ = (unsigned char)lethal_obstacle;
   inscribed_inflated_obstacle_ = lethal_obstacle_ - 1;
 
-  env_ = new EnvironmentNAVXYTHETALAT();
+  env_ = new MhaEnvironment();
 
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);
 
