@@ -92,6 +92,11 @@ install:
 before_script:
   # source dependencies: install using wstool.
   - cd ~/catkin_ws/src
+  # we need sbpl_catkin here
+  - git clone https://github.com/aurone/sbpl_catkin.git
+  - cd sbpl_catkin
+  - git submodule init
+  - git submodule update
   - wstool init
   - if [[ -f $ROSINSTALL_FILE ]] ; then wstool merge $ROSINSTALL_FILE ; fi
   - wstool up
