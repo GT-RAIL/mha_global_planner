@@ -13,6 +13,6 @@
     <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
   </include>
 
-  <!-- Move base -->
-  <include file="$(find mha_global_planner)/launch/includes/mha_move_base.launch.xml"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/velocity_smoother.launch.xml"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/safety_controller.launch.xml"/>
 </launch>
