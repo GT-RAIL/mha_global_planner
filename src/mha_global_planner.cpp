@@ -11,32 +11,6 @@ PLUGINLIB_EXPORT_CLASS(mha_global_planner::MhaGlobalPlanner,
 
 namespace mha_global_planner {
 
-class MhaStateQueryChange : public StateChangeQuery {
- public:
-  MhaStateQueryChange(MhaEnvironment* env,
-                      std::vector<nav2dcell_t> const& changedcellsV)
-      : env_(env), changedcellsV_(changedcellsV) {}
-
-  // lazy init, because we do not always end up calling this method
-  // virtual std::vector<int> const* getPredecessors() const {
-  // if (predsOfChangedCells_.empty() && !changedcellsV_.empty())
-  // env_->GetPredsofChangedEdges(&changedcellsV_, &predsOfChangedCells_);
-  // return &predsOfChangedCells_;
-  //}
-
-  // lazy init, because we do not always end up calling this method
-  // virtual std::vector<int> const* getSuccessors() const {
-  // if (succsOfChangedCells_.empty() && !changedcellsV_.empty())
-  // env_->GetSuccsofChangedEdges(&changedcellsV_, &succsOfChangedCells_);
-  // return &succsOfChangedCells_;
-  //}
-
-  MhaEnvironment* env_;
-  std::vector<nav2dcell_t> const& changedcellsV_;
-  mutable std::vector<int> predsOfChangedCells_;
-  mutable std::vector<int> succsOfChangedCells_;
-};
-
 MhaGlobalPlanner::MhaGlobalPlanner() : initialized_(false) {}
 
 MhaGlobalPlanner::MhaGlobalPlanner(std::string name,
@@ -60,7 +34,7 @@ void MhaGlobalPlanner::initialize(std::string name,
   ros::NodeHandle nh;
 
   int lethal_obstacle;
-  private_nh.param("primitive_filename", primitive_filename_, std::string(""));
+  private_nh.param("primitive_filename", primitive_filename_, std::string("/home/peter/sim_ws/src/mha_global_planner/primitives/all_file.mprim"));
   private_nh.param("allocated_time", allocated_time_, 10.0);
   private_nh.param("initial_epsilon", initial_epsilon_, 3.0);
   private_nh.param("force_scratch_limit", force_scratch_limit_, 500);
@@ -69,8 +43,7 @@ void MhaGlobalPlanner::initialize(std::string name,
   lethal_obstacle_ = (unsigned char)lethal_obstacle;
   inscribed_inflated_obstacle_ = lethal_obstacle_ - 1;
 
-  env_ = new MhaEnvironment();
-
+  env_ = new EnvironmentNAVXYTHETALAT();
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);
 
   // mha needs the footprint of the robot. We assume it is constant.
@@ -90,7 +63,11 @@ void MhaGlobalPlanner::initialize(std::string name,
     ret = env_->InitializeEnv(
         costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
         costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
-        perimeterptsV, costmap_ros_->getCostmap()->getResolution(),
+        nullptr,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        perimeterptsV, 0.025,
         FORWARD_PLANNING_SPEED_, ROT_PLANNING_SPEED_, obst_cost_thresh_,
         primitive_filename_.c_str());
   } catch (SBPL_Exception e) {
@@ -142,7 +119,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         start.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
         theta_start);
     if (ret < 0 || mha_planner_->set_start(ret) == 0) {
-      ROS_ERROR("ERROR: failed to set start state\n");
+      ROS_ERROR("ERROR: failed to set start state");
       return false;
     }
   } catch (SBPL_Exception e) {
@@ -157,7 +134,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         goal.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
         theta_goal);
     if (ret < 0 || mha_planner_->set_goal(ret) == 0) {
-      ROS_ERROR("ERROR: failed to set goal state\n");
+      ROS_ERROR("ERROR: failed to set goal state");
       return false;
     }
   } catch (SBPL_Exception e) {
@@ -167,7 +144,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   }
 
   // setting planner parameters
-  ROS_DEBUG("allocated:%f, init eps:%f\n", allocated_time_, initial_epsilon_);
+  ROS_DEBUG("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
   mha_planner_->set_search_mode(false);
 
@@ -178,9 +155,9 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     int ret = mha_planner_->replan(allocated_time_, &solution_stateIDs,
                                    &solution_cost);
     if (ret)
-      ROS_DEBUG("Solution is found\n");
+      ROS_DEBUG("Solution is found");
     else {
-      ROS_INFO("Solution not found\n");
+      ROS_INFO("Solution not found");
       return false;
     }
   } catch (SBPL_Exception e) {
@@ -198,7 +175,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         "SBPL encountered a fatal exception while reconstructing the path");
     return false;
   }
-  ROS_DEBUG("Plan has %d points.\n", (int)sbpl_path.size());
+  ROS_DEBUG("Plan has %d points.", (int)sbpl_path.size());
   ros::Time plan_time = ros::Time::now();
 
   // create a message for the plan

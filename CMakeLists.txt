@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
+set(CMAKE_BUILD_TYPE Debug)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mha_global_planner
