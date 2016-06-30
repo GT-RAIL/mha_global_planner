@@ -18,18 +18,18 @@ class MhaStateQueryChange : public StateChangeQuery {
       : env_(env), changedcellsV_(changedcellsV) {}
 
   // lazy init, because we do not always end up calling this method
-  virtual std::vector<int> const* getPredecessors() const {
-    if (predsOfChangedCells_.empty() && !changedcellsV_.empty())
-      env_->GetPredsofChangedEdges(&changedcellsV_, &predsOfChangedCells_);
-    return &predsOfChangedCells_;
-  }
+  // virtual std::vector<int> const* getPredecessors() const {
+  // if (predsOfChangedCells_.empty() && !changedcellsV_.empty())
+  // env_->GetPredsofChangedEdges(&changedcellsV_, &predsOfChangedCells_);
+  // return &predsOfChangedCells_;
+  //}
 
   // lazy init, because we do not always end up calling this method
-  virtual std::vector<int> const* getSuccessors() const {
-    if (succsOfChangedCells_.empty() && !changedcellsV_.empty())
-      env_->GetSuccsofChangedEdges(&changedcellsV_, &succsOfChangedCells_);
-    return &succsOfChangedCells_;
-  }
+  // virtual std::vector<int> const* getSuccessors() const {
+  // if (succsOfChangedCells_.empty() && !changedcellsV_.empty())
+  // env_->GetSuccsofChangedEdges(&changedcellsV_, &succsOfChangedCells_);
+  // return &succsOfChangedCells_;
+  //}
 
   MhaEnvironment* env_;
   std::vector<nav2dcell_t> const& changedcellsV_;
@@ -90,10 +90,6 @@ void MhaGlobalPlanner::initialize(std::string name,
     ret = env_->InitializeEnv(
         costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
         costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
-        nullptr,  // mapdata, initialized to freespace
-        0, 0, 0,  // start (x, y, theta)
-        0, 0, 0,  // goal (x, y, theta)
-        0, 0, 0,  // goal tolerance (ingored right now)
         perimeterptsV, costmap_ros_->getCostmap()->getResolution(),
         FORWARD_PLANNING_SPEED_, ROT_PLANNING_SPEED_, obst_cost_thresh_,
         primitive_filename_.c_str());
@@ -167,67 +163,6 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   } catch (SBPL_Exception e) {
     ROS_ERROR(
         "SBPL encountered a fatal exception while setting the goal state");
-    return false;
-  }
-
-  int offOnCount = 0;
-  int onOffCount = 0;
-  int allCount = 0;
-  std::vector<nav2dcell_t> changedcellsV;
-
-  for (unsigned int ix = 0; ix < costmap_ros_->getCostmap()->getSizeInCellsX();
-       ix++) {
-    for (unsigned int iy = 0;
-         iy < costmap_ros_->getCostmap()->getSizeInCellsY(); iy++) {
-      unsigned char oldCost = env_->GetMapCost(ix, iy);
-      unsigned char newCost =
-          costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix, iy));
-
-      if (oldCost == newCost) continue;
-
-      allCount++;
-
-      // first case - off cell goes on
-
-      if ((oldCost != costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE) &&
-           oldCost != costMapCostToSBPLCost(
-                          costmap_2d::INSCRIBED_INFLATED_OBSTACLE)) &&
-          (newCost == costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE) ||
-           newCost == costMapCostToSBPLCost(
-                          costmap_2d::INSCRIBED_INFLATED_OBSTACLE))) {
-        offOnCount++;
-      }
-
-      if ((oldCost == costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE) ||
-           oldCost == costMapCostToSBPLCost(
-                          costmap_2d::INSCRIBED_INFLATED_OBSTACLE)) &&
-          (newCost != costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE) &&
-           newCost != costMapCostToSBPLCost(
-                          costmap_2d::INSCRIBED_INFLATED_OBSTACLE))) {
-        onOffCount++;
-      }
-      env_->UpdateCost(
-          ix, iy,
-          costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix, iy)));
-
-      nav2dcell_t nav2dcell;
-      nav2dcell.x = ix;
-      nav2dcell.y = iy;
-      changedcellsV.push_back(nav2dcell);
-    }
-  }
-
-  try {
-    if (!changedcellsV.empty()) {
-      StateChangeQuery* scq = new MhaStateQueryChange(env_, changedcellsV);
-      mha_planner_->costs_changed(*scq);
-      delete scq;
-    }
-
-    if (allCount > force_scratch_limit_)
-      mha_planner_->force_planning_from_scratch();
-  } catch (SBPL_Exception e) {
-    ROS_ERROR("SBPL failed to update the costmap");
     return false;
   }
 
