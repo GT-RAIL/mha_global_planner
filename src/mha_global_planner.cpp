@@ -50,45 +50,27 @@ void MhaGlobalPlanner::initialize(std::string name,
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);
 
   // mha needs the footprint of the robot. We assume it is constant.
-  //std::vector<geometry_msgs::point> footprint =
-      //costmap_ros_->getrobotfootprint();
-  //std::vector<sbpl_2dpt_t> perimeterptsv;
-  //perimeterptsv.reserve(footprint.size());
-  //for (size_t ii(0); ii < footprint.size(); ++ii) {
-    //sbpl_2dpt_t pt;
-    //pt.x = footprint[ii].x;
-    //pt.y = footprint[ii].y;
-    //perimeterptsv.push_back(pt);
-  //}
-
-  std::vector<sbpl_2Dpt_t> perimeter;
-  sbpl_2Dpt_t pt_m;
-  double halfwidth = 0.01;
-  double halflength = 0.01;
-  pt_m.x = -halflength;
-  pt_m.y = -halfwidth;
-  perimeter.push_back(pt_m);
-  pt_m.x = halflength;
-  pt_m.y = -halfwidth;
-  perimeter.push_back(pt_m);
-  pt_m.x = halflength;
-  pt_m.y = halfwidth;
-  perimeter.push_back(pt_m);
-  pt_m.x = -halflength;
-  pt_m.y = halfwidth;
-  perimeter.push_back(pt_m);
+  std::vector<geometry_msgs::Point> footprint =
+      costmap_ros_->getRobotFootprint();
+  std::vector<sbpl_2Dpt_t> perimeterptsv;
+  perimeterptsv.reserve(footprint.size());
+  for (size_t ii(0); ii < footprint.size(); ++ii) {
+    sbpl_2Dpt_t pt;
+    pt.x = footprint[ii].x;
+    pt.y = footprint[ii].y;
+    perimeterptsv.push_back(pt);
+  }
 
   bool ret;
   try {
-    ret = env_->InitializeEnv("/home/peter/sim_ws/env.cfg", perimeter, primitive_filename_.c_str());
-    //ret = env_->initializeenv(
-        //// todo multiply by 2 is because primitive resolution is twice grid
-        //// resolution
-        //2 * costmap_ros_->getcostmap()->getsizeincellsx(),  // width
-        //2 * costmap_ros_->getcostmap()->getsizeincellsy(),  // height
-        //nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.025,
-        //forward_planning_speed_, rot_planning_speed_, obst_cost_thresh_,
-        //primitive_filename_.c_str());
+    ret = env_->InitializeEnv(
+        // todo multiply by 2 is because primitive resolution is twice grid
+        // resolution
+        2 * costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
+        2 * costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
+        nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.025,
+        FORWARD_PLANNING_SPEED_, ROT_PLANNING_SPEED_, obst_cost_thresh_,
+        primitive_filename_.c_str());
   } catch (SBPL_Exception e) {
     ROS_ERROR("SBPL encountered a fatal exception!");
     ret = false;
@@ -135,10 +117,10 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
       2 * atan2(goal.pose.orientation.z, goal.pose.orientation.w);
 
   try {
-    int ret = env_->SetStart(0.11, 0.11, 0);
-        //start.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
-        //start.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
-        //theta_start);
+    int ret = env_->SetStart(
+        start.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
+        start.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
+        theta_start);
     if (ret < 0 || mha_planner_->set_start(ret) == 0) {
       ROS_ERROR("ERROR: failed to set start state");
       return false;
@@ -150,10 +132,10 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   }
 
   try {
-    int ret = env_->SetGoal(35, 47.5, 0);
-        //goal.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
-        //goal.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
-        //theta_goal);
+    int ret = env_->SetGoal(
+        goal.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
+        goal.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
+        theta_goal);
     if (ret < 0 || mha_planner_->set_goal(ret) == 0) {
       ROS_ERROR("ERROR: failed to set goal state");
       return false;
@@ -168,6 +150,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   ROS_INFO("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
   mha_planner_->set_search_mode(false);
+  mha_planner_->set_dec_eps(1);
 
   ROS_INFO("[sbpl_mha_planner] run planner");
   std::vector<int> solution_stateIDs;
