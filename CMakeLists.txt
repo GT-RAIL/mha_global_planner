@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
+
 set(CMAKE_BUILD_TYPE Debug)
 
 catkin_package(
@@ -29,7 +30,7 @@ include_directories(
   ${SBPL_INCLUDE_DIRS}
 )
 
-add_library(mha_global_planner src/mha_global_planner.cpp)
+add_library(mha_global_planner src/mha_global_planner.cpp src/manhattan_distance_heuristic.cpp)
 
 link_directories(
   ${PCL_LIBRARY_DIRS}
@@ -37,6 +38,7 @@ link_directories(
 )
 
 add_definitions(${PCL_DEFINITIONS})
+add_definitions(-DROS)
 
 target_link_libraries(mha_global_planner
   ${catkin_LIBRARIES}

@@ -1,4 +1,5 @@
 #include "mha_global_planner/mha_global_planner.h"
+#include "mha_global_planner/manhattan_distance_heuristic.h"
 
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -30,11 +31,13 @@ void MhaGlobalPlanner::initialize(std::string name,
   costmap_ros_ = costmap_ros;
   costmap_ = costmap_ros_->getCostmap();
 
-  ros::NodeHandle private_nh("~" + name);
+  ros::NodeHandle private_nh("~/" + name);
   ros::NodeHandle nh;
 
   int lethal_obstacle;
-  private_nh.param("primitive_filename", primitive_filename_, std::string("/home/peter/sim_ws/src/mha_global_planner/primitives/all_file.mprim"));
+  private_nh.param("primitive_filename", primitive_filename_,
+                   std::string("/home/peter/sim_ws/src/mha_global_planner/"
+                               "primitives/all_file.mprim"));
   private_nh.param("allocated_time", allocated_time_, 10.0);
   private_nh.param("initial_epsilon", initial_epsilon_, 3.0);
   private_nh.param("force_scratch_limit", force_scratch_limit_, 500);
@@ -47,29 +50,45 @@ void MhaGlobalPlanner::initialize(std::string name,
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);
 
   // mha needs the footprint of the robot. We assume it is constant.
-  std::vector<geometry_msgs::Point> footprint =
-      costmap_ros_->getRobotFootprint();
-  std::vector<sbpl_2Dpt_t> perimeterptsV;
-  perimeterptsV.reserve(footprint.size());
-  for (size_t ii(0); ii < footprint.size(); ++ii) {
-    sbpl_2Dpt_t pt;
-    pt.x = footprint[ii].x;
-    pt.y = footprint[ii].y;
-    perimeterptsV.push_back(pt);
-  }
+  //std::vector<geometry_msgs::point> footprint =
+      //costmap_ros_->getrobotfootprint();
+  //std::vector<sbpl_2dpt_t> perimeterptsv;
+  //perimeterptsv.reserve(footprint.size());
+  //for (size_t ii(0); ii < footprint.size(); ++ii) {
+    //sbpl_2dpt_t pt;
+    //pt.x = footprint[ii].x;
+    //pt.y = footprint[ii].y;
+    //perimeterptsv.push_back(pt);
+  //}
+
+  std::vector<sbpl_2Dpt_t> perimeter;
+  sbpl_2Dpt_t pt_m;
+  double halfwidth = 0.01;
+  double halflength = 0.01;
+  pt_m.x = -halflength;
+  pt_m.y = -halfwidth;
+  perimeter.push_back(pt_m);
+  pt_m.x = halflength;
+  pt_m.y = -halfwidth;
+  perimeter.push_back(pt_m);
+  pt_m.x = halflength;
+  pt_m.y = halfwidth;
+  perimeter.push_back(pt_m);
+  pt_m.x = -halflength;
+  pt_m.y = halfwidth;
+  perimeter.push_back(pt_m);
 
   bool ret;
   try {
-    ret = env_->InitializeEnv(
-        costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
-        costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
-        nullptr,
-        0, 0, 0,
-        0, 0, 0,
-        0, 0, 0,
-        perimeterptsV, 0.025,
-        FORWARD_PLANNING_SPEED_, ROT_PLANNING_SPEED_, obst_cost_thresh_,
-        primitive_filename_.c_str());
+    ret = env_->InitializeEnv("/home/peter/sim_ws/env.cfg", perimeter, primitive_filename_.c_str());
+    //ret = env_->initializeenv(
+        //// todo multiply by 2 is because primitive resolution is twice grid
+        //// resolution
+        //2 * costmap_ros_->getcostmap()->getsizeincellsx(),  // width
+        //2 * costmap_ros_->getcostmap()->getsizeincellsy(),  // height
+        //nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.025,
+        //forward_planning_speed_, rot_planning_speed_, obst_cost_thresh_,
+        //primitive_filename_.c_str());
   } catch (SBPL_Exception e) {
     ROS_ERROR("SBPL encountered a fatal exception!");
     ret = false;
@@ -88,6 +107,8 @@ void MhaGlobalPlanner::initialize(std::string name,
           costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix, iy)));
     }
   }
+
+  anchor_heuristic_ = new ManhattanDistanceHeuristic(env_);
 
   mha_planner_ = new MHAPlanner(env_, anchor_heuristic_, heuristics_.data(),
                                 heuristics_.size());
@@ -114,10 +135,10 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
       2 * atan2(goal.pose.orientation.z, goal.pose.orientation.w);
 
   try {
-    int ret = env_->SetStart(
-        start.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
-        start.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
-        theta_start);
+    int ret = env_->SetStart(0.11, 0.11, 0);
+        //start.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
+        //start.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
+        //theta_start);
     if (ret < 0 || mha_planner_->set_start(ret) == 0) {
       ROS_ERROR("ERROR: failed to set start state");
       return false;
@@ -129,10 +150,10 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   }
 
   try {
-    int ret = env_->SetGoal(
-        goal.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
-        goal.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
-        theta_goal);
+    int ret = env_->SetGoal(35, 47.5, 0);
+        //goal.pose.position.x - costmap_ros_->getCostmap()->getOriginX(),
+        //goal.pose.position.y - costmap_ros_->getCostmap()->getOriginY(),
+        //theta_goal);
     if (ret < 0 || mha_planner_->set_goal(ret) == 0) {
       ROS_ERROR("ERROR: failed to set goal state");
       return false;
@@ -144,18 +165,18 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   }
 
   // setting planner parameters
-  ROS_DEBUG("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
+  ROS_INFO("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
   mha_planner_->set_search_mode(false);
 
-  ROS_DEBUG("[sbpl_mha_planner] run planner");
+  ROS_INFO("[sbpl_mha_planner] run planner");
   std::vector<int> solution_stateIDs;
   int solution_cost;
   try {
     int ret = mha_planner_->replan(allocated_time_, &solution_stateIDs,
                                    &solution_cost);
     if (ret)
-      ROS_DEBUG("Solution is found");
+      ROS_INFO("Solution is found");
     else {
       ROS_INFO("Solution not found");
       return false;
@@ -165,7 +186,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     return false;
   }
 
-  ROS_DEBUG("size of solution=%d", (int)solution_stateIDs.size());
+  ROS_INFO("size of solution=%d", (int)solution_stateIDs.size());
 
   std::vector<EnvNAVXYTHETALAT3Dpt_t> sbpl_path;
   try {
@@ -175,7 +196,7 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
         "SBPL encountered a fatal exception while reconstructing the path");
     return false;
   }
-  ROS_DEBUG("Plan has %d points.", (int)sbpl_path.size());
+  ROS_INFO("Plan has %d points.", (int)sbpl_path.size());
   ros::Time plan_time = ros::Time::now();
 
   // create a message for the plan
