@@ -1,0 +1,3 @@
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mha_global_planner)/rviz/mha_config.rviz"/>
+</launch>
