@@ -27,11 +27,10 @@ class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
 
  private:
   // \brief speed we assume the robot drives in meters per sec
-  const double FORWARD_PLANNING_SPEED_ = 0.3;
+  double nominalvel_mpersecs_;
 
   // \brief speed we assume the robot rotates sec per 45 deg rotation,
-  // derived from 0.5rad/sec
-  const double ROT_PLANNING_SPEED_ = 3.15;
+  double timetoturn45degsinplace_secs_;
 
   bool initialized_;
   int obst_cost_thresh_;

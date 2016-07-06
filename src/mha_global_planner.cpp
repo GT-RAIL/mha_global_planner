@@ -37,11 +37,13 @@ void MhaGlobalPlanner::initialize(std::string name,
   int lethal_obstacle;
   private_nh.param("primitive_filename", primitive_filename_,
                    std::string("/home/peter/sim_ws/src/mha_global_planner/"
-                               "primitives/all_file.mprim"));
+                               "primitives/pr2.mprim"));
   private_nh.param("allocated_time", allocated_time_, 10.0);
   private_nh.param("initial_epsilon", initial_epsilon_, 3.0);
   private_nh.param("force_scratch_limit", force_scratch_limit_, 500);
   private_nh.param("lethal_obstacle", lethal_obstacle, 20);
+  private_nh.param<double>("nominalvel_mpersecs", nominalvel_mpersecs_, 0.1);
+  private_nh.param<double>("timetoturn45degsinplace_secs", timetoturn45degsinplace_secs_, 3.141);
 
   lethal_obstacle_ = (unsigned char)lethal_obstacle;
   inscribed_inflated_obstacle_ = lethal_obstacle_ - 1;
@@ -69,7 +71,7 @@ void MhaGlobalPlanner::initialize(std::string name,
         2 * costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
         2 * costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
         nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.025,
-        FORWARD_PLANNING_SPEED_, ROT_PLANNING_SPEED_, obst_cost_thresh_,
+        nominalvel_mpersecs_, timetoturn45degsinplace_secs_, obst_cost_thresh_,
         primitive_filename_.c_str());
   } catch (SBPL_Exception e) {
     ROS_ERROR("SBPL encountered a fatal exception!");
