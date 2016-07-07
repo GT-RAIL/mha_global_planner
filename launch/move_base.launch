@@ -9,13 +9,13 @@
   <arg name="laser_topic" default="scan" />
   <arg name="custom_param_file" default="$(find turtlebot_navigation)/param/dummy.yaml"/>
 
-  <node  pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  <node launch-prefix="gdb --args" pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find turtlebot_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find turtlebot_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find turtlebot_navigation)/param/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find turtlebot_navigation)/param/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find turtlebot_navigation)/param/dwa_local_planner_params.yaml" command="load" />
-    <rosparam file="$(find turtlebot_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find mha_global_planner)/param/move_base_params.yaml" command="load" />
     <rosparam file="$(find turtlebot_navigation)/param/global_planner_params.yaml" command="load" />
     <rosparam file="$(find turtlebot_navigation)/param/navfn_global_planner_params.yaml" command="load" />
 
@@ -23,7 +23,7 @@
     <param unless="$(optenv MHA 0)" name="base_global_planner" value="global_planner/GlobalPlanner"/>
 
     <!-- mha_global_planner -->
-    <param name="primitive_filename" value="primitives/pr2.mprim"/>
+    <param name="MhaGlobalPlanner/primitive_filename" value="$(find mha_global_planner)/primitives/vector.mprim"/>
     <param if="$(optenv MHA 1)" name="base_global_planner" value="mha_global_planner/MhaGlobalPlanner"/>
 
     <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
