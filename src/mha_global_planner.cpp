@@ -35,9 +35,7 @@ void MhaGlobalPlanner::initialize(std::string name,
   ros::NodeHandle nh;
 
   int lethal_obstacle;
-  private_nh.param("primitive_filename", primitive_filename_,
-                   std::string("/home/peter/sim_ws/src/mha_global_planner/"
-                               "primitives/pr2.mprim"));
+  private_nh.param("primitive_filename", primitive_filename_, std::string("primitives/pr2.mprim"));
   private_nh.param("allocated_time", allocated_time_, 10.0);
   private_nh.param("initial_epsilon", initial_epsilon_, 3.0);
   private_nh.param("force_scratch_limit", force_scratch_limit_, 500);
@@ -66,11 +64,9 @@ void MhaGlobalPlanner::initialize(std::string name,
   bool ret;
   try {
     ret = env_->InitializeEnv(
-        // todo multiply by 2 is because primitive resolution is twice grid
-        // resolution
-        2 * costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
-        2 * costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
-        nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.025,
+        costmap_ros_->getCostmap()->getSizeInCellsX(),  // width
+        costmap_ros_->getCostmap()->getSizeInCellsY(),  // height
+        nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, perimeterptsv, 0.05,
         nominalvel_mpersecs_, timetoturn45degsinplace_secs_, obst_cost_thresh_,
         primitive_filename_.c_str());
   } catch (SBPL_Exception e) {
@@ -82,13 +78,10 @@ void MhaGlobalPlanner::initialize(std::string name,
     exit(1);
   }
 
-  for (ssize_t ix(0); ix < costmap_ros_->getCostmap()->getSizeInCellsX();
-       ++ix) {
-    for (ssize_t iy(0); iy < costmap_ros_->getCostmap()->getSizeInCellsY();
-         ++iy) {
-      env_->UpdateCost(
-          ix, iy,
-          costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix, iy)));
+  for (ssize_t x(0); x < costmap_ros_->getCostmap()->getSizeInCellsX(); ++x) {
+    for (ssize_t y(0); y < costmap_ros_->getCostmap()->getSizeInCellsY(); ++y) {
+      int sbpl_cost = costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(x, y));
+      env_->UpdateCost(x, y, sbpl_cost);
     }
   }
 
