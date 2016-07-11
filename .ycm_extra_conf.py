@@ -72,7 +72,8 @@ flags = [
 '-I', '/usr/include',
 '-I', '/usr/local/include',
 '-I', 'include',
-'-I', '/home/peter/sim_ws/src/sbpl_catkin/sbpl/src/include',
+'-I', '/home/pdmitrano/sim_ws/src/sbpl_catkin/sbpl/src/include',
+'-I', '../../devel/include/',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

@@ -1,0 +1,291 @@
+resolution_m: 0.050000
+numberofangles: 16
+totalnumberofprimitives: 3
+primID: 0
+startangle_c: 0
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 0
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 0
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 1
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 1
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 1
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 2
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 2
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 2
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 3
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 3
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 3
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 4
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 4
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 4
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 5
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 5
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 5
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 6
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 6
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 6
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 7
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 7
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 7
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 8
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 8
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 8
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 9
+endpose_c: 1 0 0
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 9
+endpose_c: 0 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 9
+endpose_c: 0 0 3
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 10
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 10
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 10
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 11
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 11
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 11
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 12
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 12
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 12
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 13
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 13
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 13
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 14
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 14
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 14
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707
+primID: 0
+startangle_c: 15
+endpose_c: 1 0 1
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0500 0.0000 0.0000
+primID: 0
+startangle_c: 15
+endpose_c: 0 0 2
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 1.5707
+primID: 0
+startangle_c: 15
+endpose_c: 0 0 4
+additionalactioncostmult: 1
+intermediateposes: 1
+0.0000 0.0000 -1.5707

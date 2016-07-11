@@ -145,7 +145,8 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   ROS_INFO("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
   mha_planner_->set_search_mode(false);
-  mha_planner_->set_dec_eps(1);
+  mha_planner_->set_dec_eps(3.0);
+  mha_planner_->set_initial_eps(3.0);
 
   ROS_INFO("[sbpl_mha_planner] run planner");
   std::vector<int> solution_stateIDs;
