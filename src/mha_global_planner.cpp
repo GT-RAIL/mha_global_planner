@@ -141,6 +141,19 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
     return false;
   }
 
+  // update the costs before we replan
+  for(unsigned int ix = 0; ix < costmap_ros_->getCostmap()->getSizeInCellsX(); ix++) {
+    for(unsigned int iy = 0; iy < costmap_ros_->getCostmap()->getSizeInCellsY(); iy++) {
+
+      unsigned char oldCost = env_->GetMapCost(ix,iy);
+      unsigned char newCost = costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix,iy));
+
+      if(oldCost == newCost) continue;
+      env_->UpdateCost(ix, iy, costMapCostToSBPLCost(costmap_ros_->getCostmap()->getCost(ix,iy)));
+    }
+  }
+
+
   // setting planner parameters
   ROS_INFO("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
