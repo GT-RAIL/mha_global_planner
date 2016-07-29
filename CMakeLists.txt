@@ -30,7 +30,11 @@ include_directories(
   ${SBPL_INCLUDE_DIRS}
 )
 
-add_library(mha_global_planner src/mha_global_planner.cpp src/manhattan_distance_heuristic.cpp)
+add_library(mha_global_planner
+  src/demo_path_distance_heuristic.cpp
+  src/euclidean_distance_heuristic.cpp
+  src/mha_global_planner.cpp
+  src/hashable_cell.cpp)
 
 link_directories(
   ${PCL_LIBRARY_DIRS}

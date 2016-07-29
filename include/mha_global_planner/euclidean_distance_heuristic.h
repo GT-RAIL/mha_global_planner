@@ -4,9 +4,9 @@
 
 namespace mha_global_planner {
 
-class ManhattanDistanceHeuristic : public EmbeddedHeuristic {
+class EuclideanDistanceHeuristic : public EmbeddedHeuristic {
  public:
-  ManhattanDistanceHeuristic(EnvironmentNAVXYTHETALAT* environment);
+  EuclideanDistanceHeuristic(EnvironmentNAVXYTHETALAT* environment);
 
   int GetGoalHeuristic(int state_id);
   int GetStartHeuristic(int state_id);

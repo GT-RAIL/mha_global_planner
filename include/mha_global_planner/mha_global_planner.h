@@ -1,5 +1,7 @@
 #pragma once
 
+#include "mha_global_planner/demo_path_distance_heuristic.h"
+
 #include <angles/angles.h>
 #include <base_local_planner/costmap_model.h>
 #include <base_local_planner/world_model.h>
@@ -49,6 +51,7 @@ class MhaGlobalPlanner : public nav_core::BaseGlobalPlanner {
   EnvironmentNAVXYTHETALAT* env_;
   MHAPlanner* mha_planner_;
   Heuristic* anchor_heuristic_;
+  DemoPathDistanceHeuristic* demo_path_heuristic_;
   std::string primitive_filename_;
   std::vector<Heuristic*> heuristics_;
   ros::Publisher plan_pub_;
