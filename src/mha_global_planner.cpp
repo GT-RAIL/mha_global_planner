@@ -48,6 +48,7 @@ void MhaGlobalPlanner::initialize(std::string name,
 
   lethal_obstacle_ = (unsigned char)lethal_obstacle;
   inscribed_inflated_obstacle_ = lethal_obstacle_ - 1;
+  sbpl_cost_multiplier_ = (unsigned char) (costmap_2d::INSCRIBED_INFLATED_OBSTACLE/inscribed_inflated_obstacle_ + 1);
 
   env_ = new EnvironmentNAVXYTHETALAT();
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);

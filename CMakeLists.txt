@@ -42,7 +42,7 @@ link_directories(
 )
 
 add_definitions(${PCL_DEFINITIONS})
-add_definitions(-DDEBUG)
+add_definitions(-DROS)
 
 target_link_libraries(mha_global_planner
   ${catkin_LIBRARIES}

@@ -9,7 +9,7 @@
   <arg name="laser_topic" default="scan" />
   <arg name="custom_param_file" default="$(find turtlebot_navigation)/param/dummy.yaml"/>
 
-  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  <node launch-prefix="gdb --args" pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find turtlebot_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find turtlebot_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find turtlebot_navigation)/param/local_costmap_params.yaml" command="load" />
@@ -23,7 +23,7 @@
     <param unless="$(optenv MHA 0)" name="base_global_planner" value="global_planner/GlobalPlanner"/>
 
     <!-- mha_global_planner -->
-    <param name="MhaGlobalPlanner/primitive_filename" value="$(find mha_global_planner)/primitives/test.mprim"/>
+    <param name="MhaGlobalPlanner/primitive_filename" value="$(find mha_global_planner)/primitives/vector.mprim"/>
     <param if="$(optenv MHA 1)" name="base_global_planner" value="mha_global_planner/MhaGlobalPlanner"/>
 
     <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
@@ -33,6 +33,8 @@
     <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
 
     <remap from="cmd_vel" to="navigation_velocity_smoother/raw_cmd_vel"/>
+
+    <remap from="move_base/demo_path" to="points_to_path/path" />
     <remap from="odom" to="$(arg odom_topic)"/>
     <remap from="scan" to="$(arg laser_topic)"/>
   </node>

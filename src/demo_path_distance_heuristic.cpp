@@ -30,16 +30,24 @@ int DemoPathDistanceHeuristic::GetGoalHeuristic(int current_state_id) {
                                   robot_theta);
 
   float min_dist = std::numeric_limits<float>::max();
+  int min_dist_cell_x;
+  int min_dist_cell_y;
   for (const auto& cell : path_cell_set_) {
     float dist = std::sqrt((cell.x - robot_x) * (cell.x - robot_x) +
                            (cell.y - robot_y) * (cell.y - robot_y));
     if (dist < min_dist) {
       min_dist = dist;
+      min_dist_cell_x = cell.x;
+      min_dist_cell_y = cell.y;
     }
   }
 
-  // dist here is in meters so convert to time
-  return min_dist * nominalvel_mpersecs_;
+  // dist here is in cells so convert to time
+  if (!path_cell_set_.empty())
+  {
+    ROS_WARN_THROTTLE(1, "min dist from %i,%i %i,%i to demo is %f", robot_x, robot_y, min_dist_cell_x, min_dist_cell_y, min_dist);
+  }
+  return min_dist * map_resolution_ * nominalvel_mpersecs_;
 }
 
 int DemoPathDistanceHeuristic::GetFromToHeuristic(int form_id, int to_id) {
@@ -48,6 +56,7 @@ int DemoPathDistanceHeuristic::GetFromToHeuristic(int form_id, int to_id) {
 }
 
 void DemoPathDistanceHeuristic::demoPathCallback(const nav_msgs::Path& msg) {
+  ROS_INFO_ONCE("Receiving demo paths!");
   // parse out all the cells and put them into a set
   for (auto pose : msg.poses) {
     HashableCell cell;
