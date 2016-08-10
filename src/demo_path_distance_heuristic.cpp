@@ -43,10 +43,6 @@ int DemoPathDistanceHeuristic::GetGoalHeuristic(int current_state_id) {
   }
 
   // dist here is in cells so convert to time
-  if (!path_cell_set_.empty())
-  {
-    ROS_WARN_THROTTLE(1, "min dist from %i,%i %i,%i to demo is %f", robot_x, robot_y, min_dist_cell_x, min_dist_cell_y, min_dist);
-  }
   return min_dist * map_resolution_ * nominalvel_mpersecs_;
 }
 

@@ -31,6 +31,7 @@ include_directories(
 )
 
 add_library(mha_global_planner
+  src/avoid_square_heuristic.cpp
   src/demo_path_distance_heuristic.cpp
   src/euclidean_distance_heuristic.cpp
   src/mha_global_planner.cpp

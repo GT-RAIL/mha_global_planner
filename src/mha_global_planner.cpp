@@ -1,6 +1,7 @@
 #include "mha_global_planner/mha_global_planner.h"
 #include "mha_global_planner/demo_path_distance_heuristic.h"
 #include "mha_global_planner/euclidean_distance_heuristic.h"
+#include "mha_global_planner/avoid_square_heuristic.h"
 
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -91,9 +92,9 @@ void MhaGlobalPlanner::initialize(std::string name,
   }
 
   anchor_heuristic_ = new EuclideanDistanceHeuristic(env_);
-  demo_path_heuristic_ = new DemoPathDistanceHeuristic(env_, nominalvel_mpersecs_);
-  demo_path_heuristic_->initialize();
-  heuristics_.push_back(demo_path_heuristic_);
+  AvoidSquareHeuristic *heuristic_ = new AvoidSquareHeuristic(env_, nominalvel_mpersecs_);
+  heuristic_->initialize();
+  heuristics_.push_back(heuristic_);
 
   mha_planner_ = new MHAPlanner(env_, anchor_heuristic_, heuristics_.data(),
                                 heuristics_.size());
@@ -166,11 +167,11 @@ bool MhaGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start,
   }
 
   // setting planner parameters
-  ROS_INFO("allocated:%f, init eps:%f", allocated_time_, initial_epsilon_);
   mha_planner_->set_initialsolution_eps(initial_epsilon_);
   mha_planner_->set_search_mode(false);
   mha_planner_->set_dec_eps(3.0);
   mha_planner_->set_initial_eps(3.0);
+  mha_planner_->set_initial_mha_eps(3.0);
 
   ROS_INFO("[sbpl_mha_planner] run planner");
   std::vector<int> solution_stateIDs;
