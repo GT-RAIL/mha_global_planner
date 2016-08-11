@@ -5,24 +5,15 @@ namespace mha_global_planner {
 
 DemoPathDistanceHeuristic::DemoPathDistanceHeuristic(
     EnvironmentNAVXYTHETALAT* environment, float nominalvel_mpersecs)
-    : EmbeddedHeuristic(environment),
-      environment_(environment),
-      nominalvel_mpersecs_(nominalvel_mpersecs) {}
+    : BaseHeuristic(environment, nominalvel_mpersecs) {}
 
-void DemoPathDistanceHeuristic::initialize() {
-  ros::NodeHandle private_nh("~");
-  demo_path_sub_ = private_nh.subscribe(
+void DemoPathDistanceHeuristic::initialize(std::string name) {
+  BaseHeuristic::initialize(name, "demo_path_distance");
+  demo_path_sub_ = private_nh_.subscribe(
       "demo_path", 10, &DemoPathDistanceHeuristic::demoPathCallback, this);
-  // TODO: don't forget to remap this in your launch file
-  private_nh.param<float>("global_costmap_resolution", map_resolution_, 0.05);
 }
 
-int DemoPathDistanceHeuristic::GetStartHeuristic(int current_state_id) {
-  // not used in MHA*
-  return 0;
-}
-
-int DemoPathDistanceHeuristic::GetGoalHeuristic(int current_state_id) {
+int DemoPathDistanceHeuristic::heuristicValue(int current_state_id) {
   // we calculate euclidean from our current position
   // to nearest cell where a demonstration has passed through
   int robot_x, robot_y, robot_theta;
@@ -33,22 +24,26 @@ int DemoPathDistanceHeuristic::GetGoalHeuristic(int current_state_id) {
   int min_dist_cell_x;
   int min_dist_cell_y;
   for (const auto& cell : path_cell_set_) {
-    float dist = std::sqrt((cell.x - robot_x) * (cell.x - robot_x) +
-                           (cell.y - robot_y) * (cell.y - robot_y));
-    if (dist < min_dist) {
-      min_dist = dist;
+    float sqr_dist = (cell.x - robot_x) * (cell.x - robot_x) + (cell.y - robot_y) * (cell.y - robot_y);
+    if (sqr_dist < min_dist) {
+      min_dist = sqr_dist;
       min_dist_cell_x = cell.x;
       min_dist_cell_y = cell.y;
     }
   }
 
-  // dist here is in cells so convert to time
-  return min_dist * map_resolution_ * nominalvel_mpersecs_;
-}
+  //anything greater than 1 meter away we say doesn't matter
+  if (min_dist >= 1)
+  {
+    return 100000;
+  }
 
-int DemoPathDistanceHeuristic::GetFromToHeuristic(int form_id, int to_id) {
-  // not used in MHA*
-  return 0;
+  // dist here is in cells so convert meters, then millimeters
+  // then divide by speed. result is seconds/1000 as the units
+  // this is only done to match how mha does it internally
+  int cost = (1000 * min_dist * map_resolution_) / nominalvel_mpersecs_;
+  ROS_WARN_THROTTLE(1, "%i,%i running demo path, %i", robot_x, robot_y, cost);
+  return cost;
 }
 
 void DemoPathDistanceHeuristic::demoPathCallback(const nav_msgs::Path& msg) {

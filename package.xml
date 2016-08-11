@@ -10,6 +10,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>base_local_planner</depend>
+  <depend>dynamic_reconfigure</depend>
   <depend>roscpp</depend>
   <depend>nav_core</depend>
   <depend>sbpl_catkin</depend>

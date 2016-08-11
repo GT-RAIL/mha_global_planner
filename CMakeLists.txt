@@ -3,6 +3,7 @@ project(mha_global_planner)
 
 find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
+  dynamic_reconfigure
   roscpp
   sbpl_catkin
   geometry_msgs
@@ -10,13 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
-
 set(CMAKE_BUILD_TYPE Debug)
+
+generate_dynamic_reconfigure_options(cfg/MhaGlobalPlanner.cfg)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mha_global_planner
-  CATKIN_DEPENDS roscpp sbpl_catkin geometry_msgs
+  CATKIN_DEPENDS dynamic_reconfigure roscpp sbpl_catkin geometry_msgs
 )
 
 ###########
@@ -28,6 +30,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   ${SBPL_INCLUDE_DIRS}
+  ${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake
 )
 
 add_library(mha_global_planner
@@ -35,6 +38,7 @@ add_library(mha_global_planner
   src/demo_path_distance_heuristic.cpp
   src/euclidean_distance_heuristic.cpp
   src/mha_global_planner.cpp
+  src/base_heuristic.cpp
   src/hashable_cell.cpp)
 
 link_directories(
@@ -51,50 +55,5 @@ target_link_libraries(mha_global_planner
   ${SBPL_LIBRARIES}
 )
 
-#############
-## Install ##
-#############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark executables and/or libraries for installation
-# install(TARGETS mha_global_planner mha_global_planner
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_mha_global_planner.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+add_dependencies(mha_global_planner ${PROJECT_NAME}_gencfg)
+add_dependencies(mha_global_planner ${catkin_EXPORTED_TARGETS})

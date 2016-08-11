@@ -5,16 +5,14 @@ namespace mha_global_planner {
 
 AvoidSquareHeuristic::AvoidSquareHeuristic(
     EnvironmentNAVXYTHETALAT* environment, float nominalvel_mpersecs)
-    : EmbeddedHeuristic(environment),
-      environment_(environment),
-      nominalvel_mpersecs_(nominalvel_mpersecs) {}
+    : BaseHeuristic(environment, nominalvel_mpersecs) {}
 
-void AvoidSquareHeuristic::initialize() {
-  ros::NodeHandle private_nh("~");
-  private_nh.param<float>("global_costmap_resolution", map_resolution_, 0.05);
+void AvoidSquareHeuristic::initialize(std::string name) {
+  BaseHeuristic::initialize(name, "avoid_square");
 }
 
-int AvoidSquareHeuristic::GetGoalHeuristic(int current_state_id) {
+int AvoidSquareHeuristic::heuristicValue(int current_state_id) {
+  ROS_WARN_THROTTLE(10, "running avoid");
   // we calculate euclidean from our current position
   // to nearest cell where a demonstration has passed through
   int state_x, state_y, state_theta;
@@ -24,8 +22,7 @@ int AvoidSquareHeuristic::GetGoalHeuristic(int current_state_id) {
   double robot_y = state_y * map_resolution_;
   double robot_theta = state_theta * map_resolution_;
 
-  if (1 < robot_x && robot_x < 2.5 && 2 < robot_y && robot_y < 4.5)
-  {
+  if (1 < robot_x && robot_x < 2.5 && 2 < robot_y && robot_y < 4.5) {
     return 100000;
   }
   return 0;

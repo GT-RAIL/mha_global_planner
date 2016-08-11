@@ -1,7 +1,7 @@
 #include "mha_global_planner/mha_global_planner.h"
+#include "mha_global_planner/avoid_square_heuristic.h"
 #include "mha_global_planner/demo_path_distance_heuristic.h"
 #include "mha_global_planner/euclidean_distance_heuristic.h"
-#include "mha_global_planner/avoid_square_heuristic.h"
 
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -43,13 +43,16 @@ void MhaGlobalPlanner::initialize(std::string name,
   private_nh.param("initial_epsilon", initial_epsilon_, 3.0);
   private_nh.param("force_scratch_limit", force_scratch_limit_, 500);
   private_nh.param("lethal_obstacle", lethal_obstacle, 20);
-  private_nh.param<double>("nominalvel_mpersecs", nominalvel_mpersecs_, 0.1);
+  private_nh.param<double>("nominalvel_mpersecs", nominalvel_mpersecs_, 0.2);
   private_nh.param<double>("timetoturn45degsinplace_secs",
                            timetoturn45degsinplace_secs_, 3.141);
 
   lethal_obstacle_ = (unsigned char)lethal_obstacle;
   inscribed_inflated_obstacle_ = lethal_obstacle_ - 1;
-  sbpl_cost_multiplier_ = (unsigned char) (costmap_2d::INSCRIBED_INFLATED_OBSTACLE/inscribed_inflated_obstacle_ + 1);
+  sbpl_cost_multiplier_ =
+      (unsigned char)(costmap_2d::INSCRIBED_INFLATED_OBSTACLE /
+                          inscribed_inflated_obstacle_ +
+                      1);
 
   env_ = new EnvironmentNAVXYTHETALAT();
   obst_cost_thresh_ = costMapCostToSBPLCost(costmap_2d::LETHAL_OBSTACLE);
@@ -91,10 +94,17 @@ void MhaGlobalPlanner::initialize(std::string name,
     }
   }
 
+  BaseHeuristic *heuristic;
+
+  heuristic = new AvoidSquareHeuristic(env_, nominalvel_mpersecs_);
+  heuristic->initialize(name);
+  heuristics_.push_back(heuristic);
+
+  heuristic = new DemoPathDistanceHeuristic(env_, nominalvel_mpersecs_);
+  heuristic->initialize(name);
+  heuristics_.push_back(heuristic);
+
   anchor_heuristic_ = new EuclideanDistanceHeuristic(env_);
-  AvoidSquareHeuristic *heuristic_ = new AvoidSquareHeuristic(env_, nominalvel_mpersecs_);
-  heuristic_->initialize();
-  heuristics_.push_back(heuristic_);
 
   mha_planner_ = new MHAPlanner(env_, anchor_heuristic_, heuristics_.data(),
                                 heuristics_.size());
